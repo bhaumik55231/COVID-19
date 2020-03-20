@@ -86,23 +86,28 @@ const renderBarChart = (positives, deaths, id) => {
         {
             x: Object.keys(deaths),
             y: Object.values(deaths),
-            type: 'bar',
+            type: 'scatter',
             name: 'Death Count(s)'
         },
         {
             x: Object.keys(positives),
             y: Object.values(positives),
-            type: 'bar',
+            type: 'scatter',
             name: 'Positive Case(s)'
         }
     ];
     const layout = {
-        xaxis: {fixedrange: true},
-        yaxis: {title:`Count`, font: {size: 16}, fixedrange: true},
+        yaxis: {},
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
         title: 'COVID-19 Daily Cases',
-        barmode: 'stack'
+        xaxis: {
+            fixedrange: true
+          },
+          yaxis: {
+            title:`Count`,
+            fixedrange: true
+          }
     };
     Plotly.newPlot(`${id}`, data, layout, {responsive: true, displayModeBar: false});
 }
