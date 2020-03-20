@@ -31,7 +31,9 @@ const getDailyReport = async () => {
     const response = await fetch('https://covidtracking.com/api/states/daily');
     if(response.status === 200){
         let obj = {};
-        const data = await response.json();
+        let data = await response.json();
+        data = data.sort((a, b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0));
+        
         data.forEach(dt => {
             const date = `${dt.date.toString().split('').slice(4,6).join('')}/${dt.date.toString().split('').slice(6,8).join('')}/${dt.date.toString().split('').slice(0,4).join('')}`
             if(obj[date] === undefined){
@@ -51,20 +53,26 @@ const getDailyReport = async () => {
         });
         const array = Object.entries(obj);
         array.forEach((dt, i) => {
-            if(array[i+1]){
-                obj[dt[0]] = array[i][1] - array[i+1][1];
+            if(i === 0) return
+            if(array[i-1]){
+                obj[dt[0]] = array[i][1] - array[i-1][1];
             }
         });
 
         const arrayDeath = Object.entries(objDeath);
         arrayDeath.forEach((dt, i) => {
-            if(arrayDeath[i+1]){
-                objDeath[dt[0]] = arrayDeath[i][1] - arrayDeath[i+1][1];
+            if(i === 0) return
+            if(arrayDeath[i-1]){
+                objDeath[dt[0]] = arrayDeath[i][1] - arrayDeath[i-1][1];
             }
         });
         return {positives: obj, deaths: objDeath};
     }
     else return null;
+}
+
+const sortObject = (o) => {
+    return Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {});
 }
 
 const renderMap = (covidData, decider, id) => {
