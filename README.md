@@ -2,4 +2,4 @@
 
 Live @ https://bhaumik55231.github.io/COVID-19
 
-Using https://covidtracking.com/api/
+Data source - https://covidtracking.com/
