@@ -7,6 +7,9 @@ const covid = async () => {
     if(data){
         renderMap(data, 'positive', 'covidPositiveMap');
         renderMap(data, 'death', 'covidDeathMap');
+
+        const {positives, deaths} = await getDailyReport();
+        renderBarChart(positives, deaths, 'covidDailyCases')
     }
 }
 
@@ -16,8 +19,47 @@ const getStateData = async () => {
     else return null;
 }
 
+const getDailyReport = async () => {
+    const response = await fetch('https://covidtracking.com/api/states/daily');
+    if(response.status === 200){
+        let obj = {};
+        const data = await response.json();
+        data.forEach(dt => {
+            const date = `${dt.date.toString().split('').slice(4,6).join('')}/${dt.date.toString().split('').slice(6,8).join('')}/${dt.date.toString().split('').slice(0,4).join('')}`
+            if(obj[date] === undefined){
+                obj[date] = {};
+                const oldFormate = parseInt(date.split('/')[2]+date.split('/')[0]+date.split('/')[1]);
+                obj[date] = data.filter(d => {if(d.date === oldFormate) return d}).map(p =>p.positive).reduce((a,b) => a+b)
+            }
+        });
+        let objDeath = {};
+        data.forEach(dt => {
+            const date = `${dt.date.toString().split('').slice(4,6).join('')}/${dt.date.toString().split('').slice(6,8).join('')}/${dt.date.toString().split('').slice(0,4).join('')}`
+            if(objDeath[date] === undefined){
+                objDeath[date] = {};
+                const oldFormate = parseInt(date.split('/')[2]+date.split('/')[0]+date.split('/')[1]);
+                objDeath[date] = data.filter(d => {if(d.date === oldFormate) return d}).map(p =>p.death).reduce((a,b) => a+b)
+            }
+        });
+        const array = Object.entries(obj);
+        array.forEach((dt, i) => {
+            if(array[i+1]){
+                obj[dt[0]] = array[i][1] - array[i+1][1];
+            }
+        });
+
+        const arrayDeath = Object.entries(objDeath);
+        arrayDeath.forEach((dt, i) => {
+            if(arrayDeath[i+1]){
+                objDeath[dt[0]] = arrayDeath[i][1] - arrayDeath[i+1][1];
+            }
+        });
+        return {positives: obj, deaths: objDeath};
+    }
+    else return null;
+}
+
 const renderMap = (covidData, decider, id) => {
-    console.log(covidData)
     const data = [{
         type: 'choropleth',
         locationmode: 'USA-states',
@@ -32,8 +74,35 @@ const renderMap = (covidData, decider, id) => {
             scope: 'usa',
             showlakes: true,
             lakecolor: 'rgb(255,255,255)'
-        }
+        },
+        dragmode: false
     };
 
     Plotly.newPlot(id, data, layout, {showLink: false, responsive: true, displayModeBar: false});
+}
+
+const renderBarChart = (positives, deaths, id) => {
+    const data = [
+        {
+            x: Object.keys(deaths),
+            y: Object.values(deaths),
+            type: 'bar',
+            name: 'Death Count(s)'
+        },
+        {
+            x: Object.keys(positives),
+            y: Object.values(positives),
+            type: 'bar',
+            name: 'Positive Case(s)'
+        }
+    ];
+    const layout = {
+        xaxis: {fixedrange: true},
+        yaxis: {title:`Count`, font: {size: 16}, fixedrange: true},
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        title: 'COVID-19 Daily Cases',
+        barmode: 'stack'
+    };
+    Plotly.newPlot(`${id}`, data, layout, {responsive: true, displayModeBar: false});
 }
