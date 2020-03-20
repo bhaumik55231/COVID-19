@@ -102,7 +102,7 @@ const renderBarChart = (positives, deaths, id) => {
             x: Object.keys(deaths),
             y: Object.values(deaths),
             type: 'scatter',
-            name: 'Death Count(s)'
+            name: 'Death(s)'
         },
         {
             x: Object.keys(positives),
@@ -112,7 +112,6 @@ const renderBarChart = (positives, deaths, id) => {
         }
     ];
     const layout = {
-        yaxis: {},
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
         title: 'COVID-19 Daily Cases',
@@ -120,7 +119,7 @@ const renderBarChart = (positives, deaths, id) => {
             fixedrange: true
           },
           yaxis: {
-            title:`Count`,
+            title:`Counts`,
             fixedrange: true
           }
     };
