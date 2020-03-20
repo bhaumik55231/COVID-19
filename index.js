@@ -1,4 +1,12 @@
 window.onload = () => {
+    if('serviceWorker' in navigator){
+        try {
+            navigator.serviceWorker.register('./serviceWorker.js');
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
     covid();
 }
 
