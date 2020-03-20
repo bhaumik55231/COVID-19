@@ -6,7 +6,7 @@ const staticAssets = [
   '/index.html',
   '/index.js',
   '/covid.css',
-  'images/*'
+  '/images/*'
 ];
 
 self.addEventListener('install', async function () {
