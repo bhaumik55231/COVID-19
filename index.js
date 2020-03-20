@@ -90,8 +90,7 @@ const renderMap = (covidData, decider, id) => {
             scope: 'usa',
             showlakes: true,
             lakecolor: 'rgb(255,255,255)'
-        },
-        dragmode: false
+        }
     };
 
     Plotly.newPlot(id, data, layout, {showLink: false, responsive: true, displayModeBar: false});
