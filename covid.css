@@ -7,3 +7,7 @@
     margin-left: 0rem !important;
     margin-right: 0rem !important;
 }
+
+.col-form-label {
+    padding-left: 0 !important;
+}
