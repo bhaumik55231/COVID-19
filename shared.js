@@ -69,13 +69,14 @@ export const getStatesDaily = async () => {
 }
 
 export const renderSelectOptions = (stateDaily) => {
-    const select = document.getElementById('stateSelect');
-    let template = '';
+    const selectDIV = document.getElementById('stateSelectionDiv');
+    let template = '<label for="stateSelect" class="col-sm-2 col-form-label">Filter by state: </label><select id="stateSelect" class="form-control col-sm-4 sub-div-shadow custom-margin">';
     const allStates = sortObject(states());
     for(let key in allStates){
         template += `<option ${key === 'NY' ? 'selected': ''} value=${key}>${allStates[key]}</option>`
     }
-    select.innerHTML = template;
+    template += '</select>';
+    selectDIV.innerHTML = template;
     renderScatterPlot(filterStateData(stateDaily, 'NY'), 'covidDailyStateCases', 'NY');
     addEventStateSelect(stateDaily);
 }
