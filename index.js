@@ -55,7 +55,13 @@ const renderMap = (covidData, decider, id) => {
         type: 'choropleth',
         locationmode: 'USA-states',
         locations: covidData.map(dt => dt.state),
-        z: covidData.map(dt => dt[decider])
+        z: covidData.map(dt => dt[decider]),
+        text: covidData.map(dt => `Last updated: ${dt.lastUpdateEt}`),
+        colorscale: [
+            [0, 'rgb(242,240,247)'], [0.2, 'rgb(218,218,235)'],
+            [0.4, 'rgb(188,189,220)'], [0.6, 'rgb(158,154,200)'],
+            [0.8, 'rgb(117,107,177)'], [1, 'rgb(84,39,143)']
+        ]
     }];
 
 
@@ -73,7 +79,6 @@ const renderMap = (covidData, decider, id) => {
 }
 
 export const renderScatterPlot = (dailyData, id, state) => {
-    
     const data = [
         {
             x: dailyData.map(dt => dt.newDate),
