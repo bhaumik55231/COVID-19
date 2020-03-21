@@ -2,4 +2,4 @@
 
 Live @ https://bhaumik55231.github.io/COVID-19
 
-Data source - https://covidtracking.com/
+Daily updated data visualization on COVID-19 outbreak in the United States retried from [covidtracking](https://covidtracking.com/).
