@@ -1,3 +1,5 @@
+import { getStatesDaily, renderSelectOptions, states } from "./shared.js";
+
 window.onload = () => {
     if('serviceWorker' in navigator){
         try {
@@ -17,7 +19,9 @@ const covid = async () => {
         renderMap(data, 'death', 'covidDeathMap');
 
         const dailyUS = await getUSDaily();
-        renderBarChart(dailyUS, 'covidDailyCases')
+        renderScatterPlot(dailyUS, 'covidDailyCases')
+        const stateDaily = await getStatesDaily();
+        renderSelectOptions(stateDaily);
     }
 }
 
@@ -35,15 +39,15 @@ const getUSDaily = async () => {
         const date = dt.date;
         dt['newDate'] =`${date.toString().split('').slice(4,6).join('')}/${date.toString().split('').slice(6,8).join('')}/${date.toString().split('').slice(0,4).join('')}`
         if(index !== 0){
-            dt['dailyPositive'] = data[index].positive - data[index-1].positive;
-            dt['dailyDeath'] = data[index].death - data[index-1].death;
+            dt['dailyPositive'] = dt.positive - data[index-1].positive;
+            dt['dailyDeath'] = dt.death - data[index-1].death;
+        }
+        else{
+            dt['dailyPositive'] = dt.positive;
+            dt['dailyDeath'] = dt.death;
         }
     });
     return data;
-}
-
-const sortObject = (o) => {
-    return Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {});
 }
 
 const renderMap = (covidData, decider, id) => {
@@ -68,17 +72,18 @@ const renderMap = (covidData, decider, id) => {
     Plotly.newPlot(id, data, layout, {showLink: false, responsive: true, displayModeBar: false});
 }
 
-const renderBarChart = (dailyUS, id) => {
+export const renderScatterPlot = (dailyData, id, state) => {
+    
     const data = [
         {
-            x: dailyUS.map(dt => dt.newDate),
-            y: dailyUS.map(dt => dt.dailyDeath),
+            x: dailyData.map(dt => dt.newDate),
+            y: dailyData.map(dt => dt.dailyDeath),
             type: 'scatter',
             name: 'Death(s)'
         },
         {
-            x: dailyUS.map(dt => dt.newDate),
-            y: dailyUS.map(dt => dt.dailyPositive),
+            x: dailyData.map(dt => dt.newDate),
+            y: dailyData.map(dt => dt.dailyPositive),
             type: 'scatter',
             name: 'Positive Case(s)'
         }
@@ -86,7 +91,7 @@ const renderBarChart = (dailyUS, id) => {
     const layout = {
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
-        title: 'COVID-19 Daily Cases',
+        title: `COVID-19 Daily ${state ? states()[state]: 'US'} Cases ${state ? `- ${dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b)}`: ''}`,
         xaxis: {
             fixedrange: true
         },
