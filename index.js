@@ -83,7 +83,7 @@ const dataSourceJHU = () => {
                 newObj[obj['Country/Region']].total += getTotals(obj);
             }
         });
-        renderGlobalCount(`<h4>COVID-19 confirmed cases </br>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'confirmCount');
+        renderGlobalCount(`COVID-19 confirmed cases </br><h4>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'confirmCount');
         renderGlobalMap(newObj, 'covidPositiveGlobalMap', 'confirmed cases');
     });
     Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv', function(err, rows){
@@ -101,7 +101,7 @@ const dataSourceJHU = () => {
                 newObj[obj['Country/Region']].total += getTotals(obj);
             }   
         });
-        renderGlobalCount(`<h4>COVID-19 deaths </br>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'deathCount');
+        renderGlobalCount(`COVID-19 deaths </br><h4>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'deathCount');
         renderGlobalMap(newObj, 'covidDeathsGlobalMap', 'deaths');
     });
     // Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv', (err, rows) => {
