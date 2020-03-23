@@ -81,6 +81,16 @@ export const renderSelectOptions = (stateDaily) => {
     addEventStateSelect(stateDaily);
 }
 
+export const getTotals = (data) => {
+    let total = 0;
+    for(let key in data){
+        if(key !== 'Province/State' && key !== 'Country/Region' && key !== 'Lat' && key !== 'Long') {
+            if(total < parseInt(data[key])) total = parseInt(data[key]);
+        }
+    }
+    return total;
+}
+
 const sortObject = (o) => {
     return Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {});
 }

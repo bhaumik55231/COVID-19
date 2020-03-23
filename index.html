@@ -55,14 +55,18 @@
     </div> -->
     <div class="container">
         <h4>
-            Daily updated data visualization on COVID-19 outbreak in the United States. Data retrieved from 
+            Daily updated data visualization on COVID-19 outbreak. Data retrieved from <a href="https://www.github.com/CSSEGISandData/COVID-19">Center for Systems Science and Engineering Center</a> at Johns Hopkins University and
             <a href="https://covidtracking.com/" target="_blank">covidtracking</a> APIs.
         </h4>
-        <div class="row sub-div-shadow custom-margin" id="covidPositiveMap"></div>
-        <div class="row sub-div-shadow custom-margin" id="covidDeathMap"></div>
-        <div class="row sub-div-shadow custom-margin" id="covidDailyCases"></div>
-        <div class="row custom-margin" id="stateSelectionDiv"></div>
-        <div class="row sub-div-shadow custom-margin" id="covidDailyStateCases"></div> 
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link" href="#source_CSSEJHU">CSSE-JHU</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#source_covidtracking">covidtracking</a>
+            </li>
+        </ul>
+        <div id="root"></div>
     </div>
     <script src="./index.js" type="module"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js" defer></script>

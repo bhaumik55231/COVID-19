@@ -1,4 +1,4 @@
-import { getStatesDaily, renderSelectOptions, states } from "./shared.js";
+import { getStatesDaily, renderSelectOptions, states, getTotals } from "./shared.js";
 
 window.onload = () => {
     if('serviceWorker' in navigator){
@@ -9,20 +9,153 @@ window.onload = () => {
             console.log(error);
         }
     }
-    covid();
+    router();
 }
 
-const covid = async () => {
-    const data = await getStateData();
-    if(data){
-        renderMap(data, 'positive', 'covidPositiveMap');
-        renderMap(data, 'death', 'covidDeathMap');
+window.onhashchange = () => {
+    router();
+}
 
-        const dailyUS = await getUSDaily();
-        renderScatterPlot(dailyUS, 'covidDailyCases')
-        const stateDaily = await getStatesDaily();
-        renderSelectOptions(stateDaily);
+const router = () => {
+    const hash = decodeURIComponent(window.location.hash);
+    
+    if(hash === '' || hash === '#' || hash === '#source_CSSEJHU') {
+        dataSourceJHU();
     }
+    else if(hash === '#source_covidtracking'){
+        dataSourceCovidTracking();
+    }
+    else window.location.hash = '#';
+}
+
+const dataSourceJHU = () => {
+    document.querySelectorAll("[href='#source_CSSEJHU']")[0].classList.add('active');
+    document.querySelectorAll("[href='#source_covidtracking']")[0].classList.remove('active');
+    const root = document.getElementById('root');
+    root.innerHTML = '';
+    const div0 = document.createElement('div');
+    div0.id = 'countGlobalCases';
+    div0.classList = ['row custom-margin'];
+
+
+    const div01 = document.createElement('div');
+    div01.id = 'confirmCount';
+    div01.classList = ['col-sm-6 sub-div-shadow custom-div div-yellow'];
+    div0.append(div01);
+
+    const div02 = document.createElement('div');
+    div02.id = 'deathCount';
+    div02.classList = ['col-sm-6 sub-div-shadow custom-div div-red'];
+    div0.append(div02);
+
+    // const div03 = document.createElement('div');
+    // div03.id = 'recoveredCount';
+    // div03.classList = ['col-sm-4 sub-div-shadow custom-div div-green'];
+    // div0.append(div03);
+
+    root.append(div0);
+    const div1 = document.createElement('div');
+    div1.id = 'covidPositiveGlobalMap';
+    div1.classList = ['row sub-div-shadow custom-margin'];
+    root.append(div1);
+    const div2 = document.createElement('div');
+    div2.id = 'covidDeathsGlobalMap';
+    div2.classList = ['row sub-div-shadow custom-margin'];
+    root.append(div2);
+    const div3 = document.createElement('div');
+    div3.id = 'covidRecoveredGlobalMap';
+    div3.classList = ['row sub-div-shadow custom-margin'];
+    root.append(div3);
+
+    Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv', function(err, rows){
+        let newObj = {};
+        rows.forEach(obj => {
+            if(newObj[obj['Country/Region']] === undefined) {
+                newObj[obj['Country/Region']] = {};
+                newObj[obj['Country/Region']].country = obj['Country/Region'];
+                newObj[obj['Country/Region']].total = getTotals(obj);
+            }
+            else{
+                newObj[obj['Country/Region']].total += getTotals(obj);
+            }
+        });
+        renderGlobalCount(`<h4>Global confirmed cases </br>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'confirmCount');
+        renderGlobalMap(newObj, 'covidPositiveGlobalMap', 'confirmed cases');
+    });
+    Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv', (err, rows) => {
+        let newObj = {};
+        rows.forEach(obj => {
+            if(newObj[obj['Country/Region']] === undefined) {
+                newObj[obj['Country/Region']] = {};
+                newObj[obj['Country/Region']].country = obj['Country/Region'];
+                newObj[obj['Country/Region']].total = getTotals(obj);
+            }
+            else{
+                newObj[obj['Country/Region']].total += getTotals(obj);
+            }   
+        });
+        renderGlobalCount(`<h4>Global deaths </br>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'deathCount');
+        renderGlobalMap(newObj, 'covidDeathsGlobalMap', 'deaths');
+    });
+    // Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv', (err, rows) => {
+    //     let newObj = {};
+    //     console.log(rows.filter(dt => {if(dt['Country/Region'] === 'US') return dt}))
+    //     rows.forEach(obj => {
+    //         if(newObj[obj['Country/Region']] === undefined) {
+    //             newObj[obj['Country/Region']] = {};
+    //             newObj[obj['Country/Region']].country = obj['Country/Region'];
+    //             newObj[obj['Country/Region']].total = getTotals(obj);
+    //         }
+    //         else{
+    //             newObj[obj['Country/Region']].total += getTotals(obj);
+    //         }   
+    //     });
+    //     renderGlobalCount(`<h4>Global recovered </br>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'recoveredCount');
+    //     renderGlobalMap(newObj, 'covidRecoveredGlobalMap', 'recovered cases');
+    // });
+}
+
+const renderGlobalCount = (count, id) => {
+    document.getElementById(id).innerHTML = count;
+}
+
+const dataSourceCovidTracking = async () => {
+    document.querySelectorAll("[href='#source_CSSEJHU']")[0].classList.remove('active');
+    document.querySelectorAll("[href='#source_covidtracking']")[0].classList.add('active');
+    const root = document.getElementById('root');
+    root.innerHTML = '';
+    const div1 = document.createElement('div');
+    div1.id = 'covidPositiveMap';
+    div1.classList = ['row sub-div-shadow custom-margin'];
+    root.append(div1);
+
+    const div2 = document.createElement('div');
+    div2.id = 'covidDeathMap';
+    div2.classList = ['row sub-div-shadow custom-margin'];
+    root.append(div2);
+
+    const div3 = document.createElement('div');
+    div3.id = 'covidDailyCases';
+    div3.classList = ['row sub-div-shadow custom-margin'];
+    root.append(div3);
+
+    const div4 = document.createElement('div');
+    div4.id = 'stateSelectionDiv';
+    div4.classList = ['row custom-margin'];
+    root.append(div4);
+
+    const div5 = document.createElement('div');
+    div5.id = 'covidDailyStateCases';
+    div5.classList = ['row sub-div-shadow custom-margin'];
+    root.append(div5);
+
+    const data = await getStateData();
+    renderMap(data, 'positive', 'covidPositiveMap');
+    renderMap(data, 'death', 'covidDeathMap');
+    const dailyUS = await getUSDaily();
+    renderScatterPlot(dailyUS, 'covidDailyCases');
+    const stateDaily = await getStatesDaily();
+    renderSelectOptions(stateDaily);
 }
 
 const getStateData = async () => {
@@ -66,13 +199,38 @@ const renderMap = (covidData, decider, id) => {
 
 
     var layout = {
-        title: `COVID-19 ${decider === 'positive' ? 'Total positive cases' : 'Total deaths' } ${covidData.map(dt => dt[decider]).reduce((a,b) => a+b)}`,
+        title: `COVID-19 USA ${decider === 'positive' ? 'Total positive cases' : 'Total deaths' } ${covidData.map(dt => dt[decider]).reduce((a,b) => a+b)}`,
         geo:{
             scope: 'usa',
             showlakes: true,
             lakecolor: 'rgb(255,255,255)'
         },	       
         dragmode: false
+    };
+
+    Plotly.newPlot(id, data, layout, {showLink: false, responsive: true, displayModeBar: false});
+}
+
+const renderGlobalMap = (obj, id, title) => {
+    const data = [{
+        type: 'choropleth',
+        locationmode: 'country names',
+        locations: Object.values(obj).map(dt => dt['country']),
+        z: Object.values(obj).map(dt => dt['total']),
+        colorscale: [
+            [0, 'rgb(242,240,247)'], [0.2, 'rgb(218,218,235)'],
+            [0.4, 'rgb(188,189,220)'], [0.6, 'rgb(158,154,200)'],
+            [0.8, 'rgb(117,107,177)'], [1, 'rgb(84,39,143)']
+        ]
+    }];
+
+    const layout = {
+        title: `Global ${title} ${Object.values(obj).map(dt => dt.total).reduce((a,b) => a+b)}`,
+        geo: {
+            projection: {
+                type: 'robinson'
+            }
+        }
     };
 
     Plotly.newPlot(id, data, layout, {showLink: false, responsive: true, displayModeBar: false});
