@@ -1,4 +1,4 @@
-import { getStatesDaily, renderSelectOptions, states, getTotals } from "./shared.js";
+import { getStatesDaily, renderSelectOptions, states, getTotals, numberWithCommas } from "./shared.js";
 
 window.onload = () => {
     if('serviceWorker' in navigator){
@@ -137,7 +137,7 @@ const extractStates = (data) => {
 }
 
 const renderGlobalCount = (count, id) => {
-    document.getElementById(id).innerHTML = count;
+    document.getElementById(id).innerHTML = numberWithCommas(count);
 }
 
 const dataSourceCovidTracking = async () => {
@@ -234,8 +234,8 @@ const renderMap = (covidData, decider, id, hideUpdatedet) => {
         }];
     }
 
-    var layout = {
-        title: `COVID-19 USA ${decider === 'positive' ? 'total positive cases' : 'Total deaths' } ${covidData.map(dt => dt[decider]).reduce((a,b) => a+b)}`,
+    const layout = {
+        title: `COVID-19 USA ${decider === 'positive' ? 'total positive cases' : 'Total deaths' } ${numberWithCommas(covidData.map(dt => dt[decider]).reduce((a,b) => a+b))}`,
         geo:{
             scope: 'usa',
             showlakes: true,
@@ -261,7 +261,7 @@ const renderGlobalMap = (obj, id, title) => {
     }];
 
     const layout = {
-        title: `Global ${title} ${Object.values(obj).map(dt => dt.total).reduce((a,b) => a+b)}`,
+        title: `Global ${title} ${numberWithCommas(Object.values(obj).map(dt => dt.total).reduce((a,b) => a+b))}`,
         geo: {
             projection: {
                 type: 'robinson'
@@ -290,7 +290,7 @@ export const renderScatterPlot = (dailyData, id, state) => {
     const layout = {
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
-        title: `COVID-19 ${state ? states()[state]: 'USA'} Daily Cases ${state ? `- ${dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b)}`: ''}`,
+        title: `COVID-19 ${state ? states()[state]: 'USA'} Daily Cases ${state ? `- ${numberWithCommas(dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b))}`: ''}`,
         xaxis: {
             fixedrange: true
         },

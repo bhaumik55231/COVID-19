@@ -91,6 +91,10 @@ export const getTotals = (data) => {
     return total;
 }
 
+export const numberWithCommas = (x) => {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 const sortObject = (o) => {
     return Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {});
 }
