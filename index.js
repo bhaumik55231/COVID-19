@@ -79,7 +79,7 @@ const dataSourceJHU = () => {
                 newObj[obj['Country/Region']].total += getTotals(obj);
             }
         });
-        renderGlobalCount(`<h4>Global confirmed cases </br>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'confirmCount');
+        renderGlobalCount(`<h4>COVID-19 confirmed cases </br>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'confirmCount');
         renderGlobalMap(newObj, 'covidPositiveGlobalMap', 'confirmed cases');
     });
     Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv', (err, rows) => {
@@ -94,7 +94,7 @@ const dataSourceJHU = () => {
                 newObj[obj['Country/Region']].total += getTotals(obj);
             }   
         });
-        renderGlobalCount(`<h4>Global deaths </br>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'deathCount');
+        renderGlobalCount(`<h4>COVID-19 deaths </br>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'deathCount');
         renderGlobalMap(newObj, 'covidDeathsGlobalMap', 'deaths');
     });
     // Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv', (err, rows) => {
@@ -254,7 +254,7 @@ export const renderScatterPlot = (dailyData, id, state) => {
     const layout = {
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
-        title: `COVID-19 Daily ${state ? states()[state]: 'US'} Cases ${state ? `- ${dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b)}`: ''}`,
+        title: `COVID-19 ${state ? states()[state]: 'USA'} Daily Cases ${state ? `- ${dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b)}`: ''}`,
         xaxis: {
             fixedrange: true
         },
