@@ -62,12 +62,16 @@ const dataSourceJHU = () => {
     div2.id = 'covidDeathsGlobalMap';
     div2.classList = ['row sub-div-shadow custom-margin'];
     root.append(div2);
-    const div3 = document.createElement('div');
-    div3.id = 'covidRecoveredGlobalMap';
-    div3.classList = ['row sub-div-shadow custom-margin'];
-    root.append(div3);
+    // const div3 = document.createElement('div');
+    // div3.id = 'covidRecoveredGlobalMap';
+    // div3.classList = ['row sub-div-shadow custom-margin'];
+    // root.append(div3);
+    const div4 = document.createElement('div');
+    div4.id = 'covidPositiveUSAMap';
+    div4.classList = ['row sub-div-shadow custom-margin'];
+    root.append(div4);
 
-    Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv', function(err, rows){
+    Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv', function(err, rows){
         let newObj = {};
         rows.forEach(obj => {
             if(newObj[obj['Country/Region']] === undefined) {
@@ -81,6 +85,9 @@ const dataSourceJHU = () => {
         });
         renderGlobalCount(`<h4>COVID-19 confirmed cases </br>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'confirmCount');
         renderGlobalMap(newObj, 'covidPositiveGlobalMap', 'confirmed cases');
+    });
+    Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv', function(err, rows){
+        renderMap(extractStates(rows.filter(dt => { if(dt['Country/Region'] === 'US') return dt})), 'positive', 'covidPositiveUSAMap', true);
     });
     Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv', (err, rows) => {
         let newObj = {};
@@ -113,6 +120,20 @@ const dataSourceJHU = () => {
     //     renderGlobalCount(`<h4>Global recovered </br>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'recoveredCount');
     //     renderGlobalMap(newObj, 'covidRecoveredGlobalMap', 'recovered cases');
     // });
+}
+
+const extractStates = (data) => {
+    const array = [];
+    const allStates = Object.values(states());
+    const stateAcronym = Object.keys(states());
+    data.forEach(obj => {
+        const state = obj['Province/State'];
+        if(allStates.indexOf(state) !== -1) {
+            const index = allStates.indexOf(state)
+            array.push({state: stateAcronym[index], positive: getTotals(obj)});
+        }
+    })
+    return array;
 }
 
 const renderGlobalCount = (count, id) => {
@@ -183,20 +204,35 @@ const getUSDaily = async () => {
     return data;
 }
 
-const renderMap = (covidData, decider, id) => {
-    const data = [{
-        type: 'choropleth',
-        locationmode: 'USA-states',
-        locations: covidData.map(dt => dt.state),
-        z: covidData.map(dt => dt[decider]),
-        text: covidData.map(dt => `Last updated: ${dt.lastUpdateEt}`),
-        colorscale: [
-            [0, 'rgb(242,240,247)'], [0.2, 'rgb(218,218,235)'],
-            [0.4, 'rgb(188,189,220)'], [0.6, 'rgb(158,154,200)'],
-            [0.8, 'rgb(117,107,177)'], [1, 'rgb(84,39,143)']
-        ]
-    }];
-
+const renderMap = (covidData, decider, id, hideUpdatedet) => {
+    let data = [];
+    if(hideUpdatedet){
+        data = [{
+            type: 'choropleth',
+            locationmode: 'USA-states',
+            locations: covidData.map(dt => dt.state),
+            z: covidData.map(dt => dt[decider]),
+            colorscale: [
+                [0, 'rgb(242,240,247)'], [0.2, 'rgb(218,218,235)'],
+                [0.4, 'rgb(188,189,220)'], [0.6, 'rgb(158,154,200)'],
+                [0.8, 'rgb(117,107,177)'], [1, 'rgb(84,39,143)']
+            ]
+        }];
+    }
+    else{
+        data = [{
+            type: 'choropleth',
+            locationmode: 'USA-states',
+            locations: covidData.map(dt => dt.state),
+            z: covidData.map(dt => dt[decider]),
+            text: covidData.map(dt => `Last updated: ${dt.lastUpdateEt}`),
+            colorscale: [
+                [0, 'rgb(242,240,247)'], [0.2, 'rgb(218,218,235)'],
+                [0.4, 'rgb(188,189,220)'], [0.6, 'rgb(158,154,200)'],
+                [0.8, 'rgb(117,107,177)'], [1, 'rgb(84,39,143)']
+            ]
+        }];
+    }
 
     var layout = {
         title: `COVID-19 USA ${decider === 'positive' ? 'Total positive cases' : 'Total deaths' } ${covidData.map(dt => dt[decider]).reduce((a,b) => a+b)}`,
