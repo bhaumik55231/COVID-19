@@ -11,3 +11,22 @@
 .col-form-label {
     padding-left: 0 !important;
 }
+
+.custom-div {
+    text-align: center;
+}
+
+.div-red {
+    background-color: rgb(252, 217, 217);
+    color: #6036f7;
+}
+
+.div-yellow {
+    background-color: rgb(255, 255, 218);
+    color: #6036f7;
+}
+
+.div-green {
+    background-color: rgb(204, 250, 204);
+    color: #6036f7;
+}
