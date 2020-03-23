@@ -35,22 +35,22 @@ const dataSourceJHU = () => {
     root.innerHTML = '';
     const div0 = document.createElement('div');
     div0.id = 'countGlobalCases';
-    div0.classList = ['row custom-margin'];
+    div0.classList = ['row sub-div-shadow custom-margin'];
 
 
     const div01 = document.createElement('div');
     div01.id = 'confirmCount';
-    div01.classList = ['col-sm-6 sub-div-shadow custom-div div-yellow'];
+    div01.classList = ['col-sm-6 custom-div'];
     div0.append(div01);
 
     const div02 = document.createElement('div');
     div02.id = 'deathCount';
-    div02.classList = ['col-sm-6 sub-div-shadow custom-div div-red'];
+    div02.classList = ['col-sm-6 custom-div'];
     div0.append(div02);
 
     // const div03 = document.createElement('div');
     // div03.id = 'recoveredCount';
-    // div03.classList = ['col-sm-4 sub-div-shadow custom-div div-green'];
+    // div03.classList = ['col-sm-4 custom-div'];
     // div0.append(div03);
 
     root.append(div0);
