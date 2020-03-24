@@ -66,10 +66,10 @@ const dataSourceJHU = () => {
     // div3.id = 'covidRecoveredGlobalMap';
     // div3.classList = ['row sub-div-shadow custom-margin'];
     // root.append(div3);
-    const div4 = document.createElement('div');
-    div4.id = 'covidPositiveUSAMap';
-    div4.classList = ['row sub-div-shadow custom-margin'];
-    root.append(div4);
+    // const div4 = document.createElement('div');
+    // div4.id = 'covidPositiveUSAMap';
+    // div4.classList = ['row sub-div-shadow custom-margin'];
+    // root.append(div4);
 
     Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv', function(err, rows){
         let newObj = {};
@@ -86,9 +86,9 @@ const dataSourceJHU = () => {
         renderGlobalCount(`COVID-19 confirmed cases </br><h4>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'confirmCount');
         renderGlobalMap(newObj, 'covidPositiveGlobalMap', 'confirmed cases');
     });
-    Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv', function(err, rows){
-        renderMap(extractStates(rows.filter(dt => { if(dt['Country/Region'] === 'US') return dt})), 'positive', 'covidPositiveUSAMap', true);
-    });
+    // Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv', function(err, rows){
+    //     renderMap(extractStates(rows.filter(dt => { if(dt['Country/Region'] === 'US') return dt})), 'positive', 'covidPositiveUSAMap', true);
+    // });
     Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv', (err, rows) => {
         let newObj = {};
         rows.forEach(obj => {
