@@ -28,13 +28,15 @@
     border-radius: 1rem;
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
     color: #000000;
-    font-size: 0.75rem;
     margin-bottom: 0.25rem;
     margin-left: 0.25rem;
     background-color: #fef6ab;
-    color: #000000;
     padding: 0px 3px;
     font-size: 1rem;
+}
+
+.filter-countries {
+    border-bottom: 0.025px solid #000000;
 }
 
 .card-body {
