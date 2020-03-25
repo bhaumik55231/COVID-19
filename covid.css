@@ -24,13 +24,11 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    background-color: transparent;
     border: 1px solid transparent;
     border-radius: 1rem;
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
     color: #000000;
     font-size: 0.75rem;
-    background-color: #ffffff;
     margin-bottom: 0.25rem;
     margin-left: 0.25rem;
     background-color: #fef6ab;
