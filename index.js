@@ -71,6 +71,20 @@ const dataSourceJHU = () => {
     // div4.classList = ['row sub-div-shadow custom-margin'];
     // root.append(div4);
 
+    const div5 = document.createElement('div');
+    div5.id = 'renderGlobalList';
+    div5.innerHTML = `<div class="card sub-div-shadow">
+                        <div class="card-header">
+                            <span class="data-summary-label-wrap row">
+                                <strong class="col-sm-6">Confirmed cases by country</strong> 
+                                <span class="col-sm-6"><input id="filterData" class="form-control" type="text" placeholder="Min. 2 characters"><span class="fas fa-search search-icon"></span></span>
+                            </span>
+                        </div>
+                        <div class="card-body" id="cardCountryList">
+                        </div></div>`
+    div5.classList = ['row custom-margin'];
+    root.append(div5);
+
     Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv', function(err, rows){
         let newObj = {};
         rows.forEach(obj => {
@@ -85,6 +99,8 @@ const dataSourceJHU = () => {
         });
         renderGlobalCount(`COVID-19 confirmed cases </br><h4>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'confirmCount');
         renderGlobalMap(newObj, 'covidPositiveGlobalMap', 'confirmed cases');
+        renderGlobalList(newObj, 'cardCountryList');
+        addEventFilterData(newObj);
     });
     // Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv', function(err, rows){
     //     renderMap(extractStates(rows.filter(dt => { if(dt['Country/Region'] === 'US') return dt})), 'positive', 'covidPositiveUSAMap', true);
@@ -120,6 +136,34 @@ const dataSourceJHU = () => {
     //     renderGlobalCount(`<h4>Global recovered </br>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'recoveredCount');
     //     renderGlobalMap(newObj, 'covidRecoveredGlobalMap', 'recovered cases');
     // });
+}
+
+const renderGlobalList = (data, id) => {
+    let finalData = Object.values(data);
+    finalData = finalData.sort((a, b) => (a.total < b.total) ? 1 : ((b.total < a.total) ? -1 : 0));
+    let template = `<ul>`
+    finalData.forEach(dt => {
+        template += `<li class="row filter-studies"><div>${dt.country}</div>
+        <div class="ml-auto"><div class="filter-btn">${numberWithCommas(dt.total)}</div></div></li>`
+    })       
+                            
+    template += `</ul></div></div>`;
+    document.getElementById(id).innerHTML = template;
+}
+
+const addEventFilterData = (data) => {
+    data = Object.values(data);
+    const search =  document.getElementById('filterData');
+    search.addEventListener('keyup', e => {
+        e.stopPropagation();
+        const value = search.value;
+        if(!value || value.trim() === '' || value.length < 2) {
+            renderGlobalList(data, 'cardCountryList');
+            return;
+        }
+        const filteredData = data.filter(dt => dt.country.toLowerCase().indexOf(value.toLowerCase()) !== -1 )
+        renderGlobalList(filteredData, 'cardCountryList')
+    });
 }
 
 const extractStates = (data) => {
