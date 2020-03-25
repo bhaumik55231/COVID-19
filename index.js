@@ -19,11 +19,11 @@ window.onhashchange = () => {
 const router = () => {
     const hash = decodeURIComponent(window.location.hash);
     
-    if(hash === '' || hash === '#' || hash === '#source_CSSEJHU') {
-        dataSourceJHU();
-    }
-    else if(hash === '#source_covidtracking'){
+    if(hash === '' || hash === '#' || hash === '#source_covidtracking') {
         dataSourceCovidTracking();
+    }
+    else if(hash === '#source_CSSEJHU'){
+        dataSourceJHU();
     }
     else window.location.hash = '#';
 }
@@ -33,8 +33,8 @@ const dataSourceJHU = () => {
     document.querySelectorAll("[href='#source_covidtracking']")[0].classList.remove('active');
     const root = document.getElementById('root');
     root.innerHTML = '';
+
     const div0 = document.createElement('div');
-    div0.id = 'countGlobalCases';
     div0.classList = ['row sub-div-shadow custom-margin'];
 
 
@@ -97,7 +97,7 @@ const dataSourceJHU = () => {
                 newObj[obj['Country/Region']].total += getTotals(obj);
             }
         });
-        renderGlobalCount(`COVID-19 confirmed cases </br><h4>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'confirmCount');
+        renderGlobalCount(`Confirmed cases </br><h4>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'confirmCount');
         renderGlobalMap(newObj, 'covidPositiveGlobalMap', 'confirmed cases');
         renderGlobalList(newObj, 'cardCountryList');
         addEventFilterData(newObj);
@@ -117,7 +117,7 @@ const dataSourceJHU = () => {
                 newObj[obj['Country/Region']].total += getTotals(obj);
             }   
         });
-        renderGlobalCount(`COVID-19 deaths </br><h4>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'deathCount');
+        renderGlobalCount(`Deaths </br><h4>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'deathCount');
         renderGlobalMap(newObj, 'covidDeathsGlobalMap', 'deaths');
     });
     // Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv', (err, rows) => {
@@ -192,6 +192,26 @@ const dataSourceCovidTracking = async () => {
     document.querySelectorAll("[href='#source_covidtracking']")[0].classList.add('active');
     const root = document.getElementById('root');
     root.innerHTML = '';
+
+    const div0 = document.createElement('div');
+    div0.classList = ['row sub-div-shadow custom-margin'];
+
+    const div01 = document.createElement('div');
+    div01.id = 'confirmCountCT';
+    div01.classList = ['col-sm-4 custom-div'];
+    div0.append(div01);
+
+    const div02 = document.createElement('div');
+    div02.id = 'deathCountCT';
+    div02.classList = ['col-sm-4 custom-div'];
+    div0.append(div02);
+
+    const div04 = document.createElement('div');
+    div04.id = 'hospitalizedCountCT';
+    div04.classList = ['col-sm-4 custom-div'];
+    div0.append(div04);
+    root.append(div0);
+
     const div1 = document.createElement('div');
     div1.id = 'covidPositiveMap';
     div1.classList = ['row sub-div-shadow custom-margin'];
@@ -217,6 +237,10 @@ const dataSourceCovidTracking = async () => {
     div5.classList = ['row sub-div-shadow custom-margin'];
     root.append(div5);
 
+    const usCurrent = await getUSCurrent();
+    renderGlobalCount(`Confirmed cases </br><h4>${usCurrent[0].positive}</h4>`, 'confirmCountCT');
+    renderGlobalCount(`Deaths </br><h4>${usCurrent[0].death}</h4>`, 'deathCountCT');
+    renderGlobalCount(`Hospitalized cases </br><h4>${usCurrent[0].hospitalized}</h4>`, 'hospitalizedCountCT');
     const data = await getStateData();
     renderMap(data, 'positive', 'covidPositiveMap');
     renderMap(data, 'death', 'covidDeathMap');
@@ -224,6 +248,7 @@ const dataSourceCovidTracking = async () => {
     renderScatterPlot(dailyUS, 'covidDailyCases');
     const stateDaily = await getStatesDaily();
     renderSelectOptions(stateDaily);
+    
 }
 
 const getStateData = async () => {
@@ -242,12 +267,22 @@ const getUSDaily = async () => {
         if(index !== 0){
             dt['dailyPositive'] = dt.positive - data[index-1].positive;
             dt['dailyDeath'] = dt.death - data[index-1].death;
+            dt['pending'] = dt.pending - data[index-1].pending;
+            dt['hospitalized'] = dt.hospitalized - data[index-1].hospitalized;
         }
         else{
             dt['dailyPositive'] = dt.positive;
             dt['dailyDeath'] = dt.death;
+            dt['pending'] = dt.pending;
+            dt['hospitalized'] = dt.hospitalized;
         }
     });
+    return data;
+}
+
+const getUSCurrent = async () => {
+    const response = await fetch('https://covidtracking.com/api/us');
+    let data = await response.json();
     return data;
 }
 
@@ -282,7 +317,7 @@ const renderMap = (covidData, decider, id, hideUpdatedet) => {
     }
 
     const layout = {
-        title: `COVID-19 USA ${decider === 'positive' ? 'total positive cases' : 'Total deaths' } ${numberWithCommas(covidData.map(dt => dt[decider]).reduce((a,b) => a+b))}`,
+        title: `USA ${decider === 'positive' ? 'total positive cases' : 'Total deaths' } ${numberWithCommas(covidData.map(dt => dt[decider]).reduce((a,b) => a+b))}`,
         geo:{
             scope: 'usa',
             showlakes: true,
@@ -325,19 +360,31 @@ export const renderScatterPlot = (dailyData, id, state) => {
             x: dailyData.map(dt => dt.newDate),
             y: dailyData.map(dt => dt.dailyDeath),
             type: 'scatter',
-            name: 'Death(s)'
+            name: 'Deaths'
         },
         {
             x: dailyData.map(dt => dt.newDate),
             y: dailyData.map(dt => dt.dailyPositive),
             type: 'scatter',
-            name: 'Positive Case(s)'
+            name: 'Positive Cases'
+        },
+        {
+            x: dailyData.map(dt => dt.newDate),
+            y: dailyData.map(dt => dt.pending),
+            type: 'scatter',
+            name: 'Pending test results'
+        },
+        {
+            x: dailyData.map(dt => dt.newDate),
+            y: dailyData.map(dt => dt.hospitalized),
+            type: 'scatter',
+            name: 'Hospitalized Cases'
         }
     ];
     const layout = {
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
-        title: `COVID-19 ${state ? states()[state]: 'USA'} Daily Cases ${state ? `- ${numberWithCommas(dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b))}`: ''}`,
+        title: `${state ? states()[state]: 'USA'} Daily Cases ${state ? `- ${numberWithCommas(dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b))}`: ''}`,
         xaxis: {
             fixedrange: true
         },
