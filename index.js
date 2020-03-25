@@ -144,8 +144,11 @@ const renderGlobalList = (data, id) => {
     let template = `<ul>`
     finalData.forEach(dt => {
         template += `<li class="row filter-studies"><div>${dt.country}</div>
-        <div class="ml-auto"><div class="filter-btn">${numberWithCommas(dt.total)}</div></div></li>`
-    })       
+                        <div class="ml-auto">
+                            <div class="filter-btn" title="Confirmed cases">${numberWithCommas(dt.total)}</div>
+                        </div>
+                    </li>`;
+    }); 
                             
     template += `</ul></div></div>`;
     document.getElementById(id).innerHTML = template;
