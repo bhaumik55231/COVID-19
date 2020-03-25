@@ -28,7 +28,8 @@
     border-radius: 1rem;
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
     color: #000000;
-    margin-bottom: 0.25rem;
+    margin-top: 0.125rem;
+    margin-bottom: 0.125rem;
     margin-left: 0.25rem;
     background-color: #fef6ab;
     padding: 0px 3px;
