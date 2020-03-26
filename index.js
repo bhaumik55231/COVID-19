@@ -76,7 +76,7 @@ const dataSourceJHU = () => {
     div5.innerHTML = `<div class="card sub-div-shadow">
                         <div class="card-header">
                             <span class="data-summary-label-wrap row">
-                                <strong class="col-sm-6">Confirmed cases by country</strong> 
+                                <strong class="col-sm-6 card-heading">Confirmed cases by country</strong> 
                                 <span class="col-sm-6"><input id="filterData" class="form-control" type="text" placeholder="Min. 2 characters"><span class="fas fa-search search-icon"></span></span>
                             </span>
                         </div>
