@@ -143,7 +143,7 @@ const renderGlobalList = (data, id) => {
     finalData = finalData.sort((a, b) => (a.total < b.total) ? 1 : ((b.total < a.total) ? -1 : 0));
     let template = `<ul>`
     finalData.forEach(dt => {
-        template += `<li class="row filter-countries"><div>${dt.country}</div>
+        template += `<li class="row filter-countries"><div class="country-name">${dt.country}</div>
                         <div class="ml-auto">
                             <div class="filter-btn" title="Confirmed cases">${numberWithCommas(dt.total)}</div>
                         </div>
