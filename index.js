@@ -365,7 +365,7 @@ export const renderScatterPlot = (dailyData, id, state) => {
 
     if(state){
         renderGlobalCount(`Confirmed cases </br><h4>${numberWithCommas(dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b))}</h4>`, 'stateConfirmCount');
-        renderGlobalCount(`Deaths </br><h4>${numberWithCommas(dailyData.map(dt => dt.dailyDeath).reduce((a,b) => a+b))}</h4>`, 'stateDeathCount');
+        renderGlobalCount(`Deaths </br><h4>${numberWithCommas(dailyData.map(dt => dt.dailyDeath).reduce((a,b) => a+b))}</h4><span class="filter-btn fatality-rate" title="Case fatality rate">CFR - ${((dailyData.map(dt => dt.dailyDeath).reduce((a,b) => a+b)/dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b))*100).toFixed(2)}%</span>`, 'stateDeathCount');
         renderGlobalCount(`Hospitalized cases </br><h4>${numberWithCommas(dailyData.map(dt => dt.hospitalized).reduce((a,b) => a+b))}</h4>`, 'stateHospitalizedCount');
         renderGlobalCount(`Total tests </br><h4>${numberWithCommas(dailyData.map(dt => dt.pending).reduce((a,b) => a+b))}</h4>`, 'stateTotalTestCount');
     }
