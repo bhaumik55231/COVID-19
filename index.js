@@ -382,7 +382,7 @@ export const renderScatterPlot = (dailyData, id, state) => {
     const layout = {
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
-        title: `${state ? states()[state]: 'USA'} Daily Cases ${state ? `- ${numberWithCommas(dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b))}`: ''}`,
+        title: `${state ? states()[state]: 'USA'} positive cases${state ? `- ${numberWithCommas(dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b))}`: ''}`,
         xaxis: {
             fixedrange: true
         },
