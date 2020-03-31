@@ -198,18 +198,23 @@ const dataSourceCovidTracking = async () => {
 
     const div01 = document.createElement('div');
     div01.id = 'confirmCountCT';
-    div01.classList = ['col-sm-4 custom-div'];
+    div01.classList = ['col-sm-3 custom-div'];
     div0.append(div01);
 
     const div02 = document.createElement('div');
     div02.id = 'deathCountCT';
-    div02.classList = ['col-sm-4 custom-div'];
+    div02.classList = ['col-sm-3 custom-div'];
     div0.append(div02);
 
     const div04 = document.createElement('div');
     div04.id = 'hospitalizedCountCT';
-    div04.classList = ['col-sm-4 custom-div'];
+    div04.classList = ['col-sm-3 custom-div'];
     div0.append(div04);
+
+    const div05 = document.createElement('div');
+    div05.id = 'totalPendingCount';
+    div05.classList = ['col-sm-3 custom-div'];
+    div0.append(div05);
     root.append(div0);
 
     const div1 = document.createElement('div');
@@ -241,6 +246,7 @@ const dataSourceCovidTracking = async () => {
     renderGlobalCount(`Confirmed cases </br><h4>${usCurrent[0].positive}</h4>`, 'confirmCountCT');
     renderGlobalCount(`Deaths </br><h4>${usCurrent[0].death}</h4>`, 'deathCountCT');
     renderGlobalCount(`Hospitalized cases </br><h4>${usCurrent[0].hospitalized}</h4>`, 'hospitalizedCountCT');
+    renderGlobalCount(`Total tests </br><h4>${usCurrent[0].totalTestResults}</h4>`, 'totalPendingCount');
     const data = await getStateData();
     renderMap(data, 'positive', 'covidPositiveMap');
     renderMap(data, 'death', 'covidDeathMap');
@@ -261,21 +267,13 @@ const getUSDaily = async () => {
     const response = await fetch('https://covidtracking.com/api/us/daily');
     let data = await response.json();
     data = data.sort((a, b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0));
-    data.forEach((dt,index) => {
+    data.forEach(dt => {
         const date = dt.date;
         dt['newDate'] =`${date.toString().split('').slice(4,6).join('')}/${date.toString().split('').slice(6,8).join('')}/${date.toString().split('').slice(0,4).join('')}`
-        if(index !== 0){
-            dt['dailyPositive'] = dt.positive - data[index-1].positive;
-            dt['dailyDeath'] = dt.death - data[index-1].death;
-            dt['pending'] = dt.pending - data[index-1].pending;
-            dt['hospitalized'] = dt.hospitalized - data[index-1].hospitalized;
-        }
-        else{
-            dt['dailyPositive'] = dt.positive;
-            dt['dailyDeath'] = dt.death;
-            dt['pending'] = dt.pending;
-            dt['hospitalized'] = dt.hospitalized;
-        }
+        dt['dailyPositive'] = dt.positiveIncrease;
+        dt['dailyDeath'] = dt.deathIncrease;
+        dt['pending'] = dt.totalTestResultsIncrease;
+        dt['hospitalized'] = dt.hospitalizedIncrease;
     });
     return data;
 }

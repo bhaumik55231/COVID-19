@@ -108,18 +108,14 @@ const addEventStateSelect = (stateDaily) => {
 }
 
 const filterStateData = (data, state) => {
-    data = data.filter(dt => { if(dt.state === state) return dt})
-    data.forEach((dt,index) => {
+    data = data.filter(dt => { if(dt.state === state) return dt});
+    data.forEach(dt => {
         const date = dt.date;
         dt['newDate'] =`${date.toString().split('').slice(4,6).join('')}/${date.toString().split('').slice(6,8).join('')}/${date.toString().split('').slice(0,4).join('')}`
-        if(index !== 0){
-            dt['dailyPositive'] = dt.positive - data[index-1].positive;
-            dt['dailyDeath'] = dt.death - data[index-1].death;
-        }
-        else{
-            dt['dailyPositive'] = dt.positive;
-            dt['dailyDeath'] = dt.death;
-        }
+        dt['dailyPositive'] = dt.positiveIncrease;
+        dt['dailyDeath'] = dt.deathIncrease;
+        dt['pending'] = dt.totalTestResultsIncrease;
+        dt['hospitalized'] = dt.hospitalizedIncrease;
     });
     return data;
 }
