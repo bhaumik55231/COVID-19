@@ -98,7 +98,7 @@ const dataSourceJHU = async () => {
 
 const renderGlobalList = (data, id) => {
     let finalData = Object.values(data);
-    finalData = finalData.sort((a, b) => (a.total < b.total) ? 1 : ((b.total < a.total) ? -1 : 0));
+    finalData = finalData.sort((a, b) => (a.confirmedTotal < b.confirmedTotal) ? 1 : ((b.confirmedTotal < a.confirmedTotal) ? -1 : 0));
     let template = `<ul>`
     finalData.forEach(dt => {
         template += `<li class="row filter-countries"><div class="country-name">${dt.country}</div>
