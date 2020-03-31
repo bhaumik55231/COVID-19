@@ -119,3 +119,49 @@ const filterStateData = (data, state) => {
     });
     return data;
 }
+
+export const getJHUData = async (url) => {
+    const response = await fetch(url);
+    const csv = await response.text();
+    const data = csvJSON(csv);
+    let newObj = {};
+    data.forEach(obj => {
+        if(newObj[obj['Country/Region']] === undefined) {
+            newObj[obj['Country/Region']] = {};
+            newObj[obj['Country/Region']].country = obj['Country/Region'];
+            newObj[obj['Country/Region']].total = getTotals(obj);
+        }
+        else{
+            newObj[obj['Country/Region']].total += getTotals(obj);
+        }   
+    });
+    return newObj;
+}
+
+export const combineJHUData = (data1, data2) => {
+    let newObj = {};
+    for(let country in data1){
+        newObj[country] = {};
+        newObj[country]['country'] = country;
+        newObj[country]['confirmedTotal'] = data1[country]['total'];
+        newObj[country]['deathTotal'] = data2[country]['total'];
+    }
+    return newObj;
+}
+
+const csvJSON = (csv) => {
+    const lines = csv.split("\n");
+    const result = [];
+    const headers = lines[0].split(",");
+    for(let i=1; i < lines.length; i++){
+        const obj = {};
+        const currentline = lines[i].split(",");
+        for(let j = 0; j<headers.length; j++){
+            obj[headers[j]] = currentline[j];
+        }
+        if(obj['Country/Region'] !== undefined) {
+            result.push(obj);
+        };
+    }
+    return result;
+}

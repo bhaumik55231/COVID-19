@@ -38,10 +38,19 @@
 
 .filter-countries {
     border-bottom: 0.025px solid #d7d7d7;
+    margin: 0px !important;
 }
 
 .card-heading {
     margin: 0.5rem 0;
+}
+
+.death-count {
+    background-color: #fab6b6;
+}
+
+.fatality-rate {
+    background-color: #c7cdff;
 }
 
 .card-body {

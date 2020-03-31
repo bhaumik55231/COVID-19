@@ -1,4 +1,4 @@
-import { getStatesDaily, renderSelectOptions, states, getTotals, numberWithCommas } from "./shared.js";
+import { getStatesDaily, renderSelectOptions, states, getTotals, numberWithCommas, getJHUData, combineJHUData } from "./shared.js";
 
 window.onload = () => {
     if('serviceWorker' in navigator){
@@ -28,7 +28,7 @@ const router = () => {
     else window.location.hash = '#';
 }
 
-const dataSourceJHU = () => {
+const dataSourceJHU = async () => {
     document.querySelectorAll("[href='#source_CSSEJHU']")[0].classList.add('active');
     document.querySelectorAll("[href='#source_covidtracking']")[0].classList.remove('active');
     const root = document.getElementById('root');
@@ -85,57 +85,16 @@ const dataSourceJHU = () => {
     div5.classList = ['row custom-margin'];
     root.append(div5);
 
-    Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv', function(err, rows){
-        let newObj = {};
-        rows.forEach(obj => {
-            if(newObj[obj['Country/Region']] === undefined) {
-                newObj[obj['Country/Region']] = {};
-                newObj[obj['Country/Region']].country = obj['Country/Region'];
-                newObj[obj['Country/Region']].total = getTotals(obj);
-            }
-            else{
-                newObj[obj['Country/Region']].total += getTotals(obj);
-            }
-        });
-        renderGlobalCount(`Confirmed cases </br><h4>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'confirmCount');
-        renderGlobalMap(newObj, 'covidPositiveGlobalMap', 'confirmed cases');
-        renderGlobalList(newObj, 'cardCountryList');
-        addEventFilterData(newObj);
-    });
-    // Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv', function(err, rows){
-    //     renderMap(extractStates(rows.filter(dt => { if(dt['Country/Region'] === 'US') return dt})), 'positive', 'covidPositiveUSAMap', true);
-    // });
-    Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv', (err, rows) => {
-        let newObj = {};
-        rows.forEach(obj => {
-            if(newObj[obj['Country/Region']] === undefined) {
-                newObj[obj['Country/Region']] = {};
-                newObj[obj['Country/Region']].country = obj['Country/Region'];
-                newObj[obj['Country/Region']].total = getTotals(obj);
-            }
-            else{
-                newObj[obj['Country/Region']].total += getTotals(obj);
-            }   
-        });
-        renderGlobalCount(`Deaths </br><h4>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'deathCount');
-        renderGlobalMap(newObj, 'covidDeathsGlobalMap', 'deaths');
-    });
-    // Plotly.d3.csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv', (err, rows) => {
-    //     let newObj = {};
-    //     console.log(rows.filter(dt => {if(dt['Country/Region'] === 'US') return dt}))
-    //     rows.forEach(obj => {
-    //         if(newObj[obj['Country/Region']] === undefined) {
-    //             newObj[obj['Country/Region']] = {};
-    //             newObj[obj['Country/Region']].country = obj['Country/Region'];
-    //             newObj[obj['Country/Region']].total = getTotals(obj);
-    //         }
-    //         else{
-    //             newObj[obj['Country/Region']].total += getTotals(obj);
-    //         }   
-    //     });
-    //     renderGlobalCount(`<h4>Global recovered </br>${Object.values(newObj).map(dt => dt.total).reduce((a,b) => a+b)}</h4>`, 'recoveredCount');
-    //     renderGlobalMap(newObj, 'covidRecoveredGlobalMap', 'recovered cases');
-    // });
+    const dataConfirmed = await getJHUData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv');
+    const dataDeaths = await getJHUData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
+    renderGlobalMap(dataConfirmed, 'covidPositiveGlobalMap', 'confirmed cases');
+    renderGlobalMap(dataDeaths, 'covidDeathsGlobalMap', 'deaths');
+    const dataCombined = combineJHUData(dataConfirmed, dataDeaths);
+    renderGlobalCount(`Confirmed cases </br><h4>${Object.values(dataCombined).map(dt => dt.confirmedTotal).reduce((a,b) => a+b)}</h4>`, 'confirmCount');
+    renderGlobalCount(`Deaths </br><h4>${Object.values(dataCombined).map(dt => dt.deathTotal).reduce((a,b) => a+b)}</h4><span title="Global case fatality rate">Global CFR - ${((Object.values(dataCombined).map(dt => dt.deathTotal).reduce((a,b) => a+b)/Object.values(dataCombined).map(dt => dt.confirmedTotal).reduce((a,b) => a+b))*100).toFixed(2)}%</span>`, 'deathCount');
+    renderGlobalList(dataCombined, 'cardCountryList');
+    addEventFilterData(dataCombined);
+    
 }
 
 const renderGlobalList = (data, id) => {
@@ -144,8 +103,10 @@ const renderGlobalList = (data, id) => {
     let template = `<ul>`
     finalData.forEach(dt => {
         template += `<li class="row filter-countries"><div class="country-name">${dt.country}</div>
-                        <div class="ml-auto">
-                            <div class="filter-btn" title="Confirmed cases">${numberWithCommas(dt.total)}</div>
+                        <div class="ml-auto row">
+                            <div class="filter-btn col" title="Confirmed cases">${numberWithCommas(dt.confirmedTotal)}</div>
+                            <div class="filter-btn col death-count" title="Deaths">${numberWithCommas(dt.deathTotal)}</div>
+                            <div class="filter-btn col fatality-rate" title="Case fatality rate">${((dt.deathTotal/dt.confirmedTotal)*100).toFixed(2)}%</div>
                         </div>
                     </li>`;
     }); 
@@ -268,7 +229,7 @@ const dataSourceCovidTracking = async () => {
 
     const usCurrent = await getUSCurrent();
     renderGlobalCount(`Confirmed cases </br><h4>${usCurrent[0].positive}</h4>`, 'confirmCountCT');
-    renderGlobalCount(`Deaths </br><h4>${usCurrent[0].death}</h4>`, 'deathCountCT');
+    renderGlobalCount(`Deaths </br><h4>${usCurrent[0].death}</h4><span title="Case fatality rate">CFR - ${((usCurrent[0].death/usCurrent[0].positive)*100).toFixed(2)}%</span>`, 'deathCountCT');
     renderGlobalCount(`Hospitalized cases </br><h4>${usCurrent[0].hospitalized}</h4>`, 'hospitalizedCountCT');
     renderGlobalCount(`Total tests </br><h4>${usCurrent[0].totalTestResults}</h4>`, 'totalPendingCount');
     const data = await getStateData();
