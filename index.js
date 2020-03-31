@@ -353,7 +353,7 @@ export const renderScatterPlot = (dailyData, id, state) => {
             x: dailyData.map(dt => dt.newDate),
             y: dailyData.map(dt => dt.pending),
             type: 'scatter',
-            name: 'Pending test results'
+            name: 'Total tests'
         },
         {
             x: dailyData.map(dt => dt.newDate),
