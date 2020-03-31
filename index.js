@@ -91,7 +91,7 @@ const dataSourceJHU = async () => {
     renderGlobalMap(dataDeaths, 'covidDeathsGlobalMap', 'deaths');
     const dataCombined = combineJHUData(dataConfirmed, dataDeaths);
     renderGlobalCount(`Confirmed cases </br><h4>${Object.values(dataCombined).map(dt => dt.confirmedTotal).reduce((a,b) => a+b)}</h4>`, 'confirmCount');
-    renderGlobalCount(`Deaths </br><h4>${Object.values(dataCombined).map(dt => dt.deathTotal).reduce((a,b) => a+b)}</h4><span title="Global case fatality rate">Global CFR - ${((Object.values(dataCombined).map(dt => dt.deathTotal).reduce((a,b) => a+b)/Object.values(dataCombined).map(dt => dt.confirmedTotal).reduce((a,b) => a+b))*100).toFixed(2)}%</span>`, 'deathCount');
+    renderGlobalCount(`Deaths </br><h4>${Object.values(dataCombined).map(dt => dt.deathTotal).reduce((a,b) => a+b)}</h4><span class="filter-btn fatality-rate" title="Global case fatality rate">Global CFR - ${((Object.values(dataCombined).map(dt => dt.deathTotal).reduce((a,b) => a+b)/Object.values(dataCombined).map(dt => dt.confirmedTotal).reduce((a,b) => a+b))*100).toFixed(2)}%</span>`, 'deathCount');
     renderGlobalList(dataCombined, 'cardCountryList');
     addEventFilterData(dataCombined);
 }
@@ -228,7 +228,7 @@ const dataSourceCovidTracking = async () => {
 
     const usCurrent = await getUSCurrent();
     renderGlobalCount(`Confirmed cases </br><h4>${usCurrent[0].positive}</h4>`, 'confirmCountCT');
-    renderGlobalCount(`Deaths </br><h4>${usCurrent[0].death}</h4><span title="Case fatality rate">CFR - ${((usCurrent[0].death/usCurrent[0].positive)*100).toFixed(2)}%</span>`, 'deathCountCT');
+    renderGlobalCount(`Deaths </br><h4>${usCurrent[0].death}</h4><span class="filter-btn fatality-rate" title="Case fatality rate">CFR - ${((usCurrent[0].death/usCurrent[0].positive)*100).toFixed(2)}%</span>`, 'deathCountCT');
     renderGlobalCount(`Hospitalized cases </br><h4>${usCurrent[0].hospitalized}</h4>`, 'hospitalizedCountCT');
     renderGlobalCount(`Total tests </br><h4>${usCurrent[0].totalTestResults}</h4>`, 'totalPendingCount');
     const data = await getStateData();
