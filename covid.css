@@ -41,8 +41,13 @@
     margin: 0px !important;
 }
 
+ul{
+    padding-left: 15px;
+}
+
 .card-heading {
     margin: 0.5rem 0;
+    padding-left: 7px !important;
 }
 
 .death-count {
