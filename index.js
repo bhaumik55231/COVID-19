@@ -238,7 +238,6 @@ const dataSourceCovidTracking = async () => {
     renderScatterPlot(dailyUS, 'covidDailyCases');
     const stateDaily = await getStatesDaily();
     renderSelectOptions(stateDaily);
-    
 }
 
 const getStateData = async () => {
