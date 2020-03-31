@@ -94,7 +94,6 @@ const dataSourceJHU = async () => {
     renderGlobalCount(`Deaths </br><h4>${Object.values(dataCombined).map(dt => dt.deathTotal).reduce((a,b) => a+b)}</h4><span title="Global case fatality rate">Global CFR - ${((Object.values(dataCombined).map(dt => dt.deathTotal).reduce((a,b) => a+b)/Object.values(dataCombined).map(dt => dt.confirmedTotal).reduce((a,b) => a+b))*100).toFixed(2)}%</span>`, 'deathCount');
     renderGlobalList(dataCombined, 'cardCountryList');
     addEventFilterData(dataCombined);
-    
 }
 
 const renderGlobalList = (data, id) => {
@@ -120,8 +119,8 @@ const addEventFilterData = (data) => {
     const search =  document.getElementById('filterData');
     search.addEventListener('keyup', e => {
         e.stopPropagation();
-        const value = search.value;
-        if(!value || value.trim() === '' || value.length < 2) {
+        const value = search.value.trim();
+        if(!value || value === '' || value.length < 2) {
             renderGlobalList(data, 'cardCountryList');
             return;
         }
