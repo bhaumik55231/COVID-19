@@ -76,7 +76,7 @@ const dataSourceJHU = async () => {
     div5.innerHTML = `<div class="card sub-div-shadow">
                         <div class="card-header">
                             <span class="data-summary-label-wrap row">
-                                <strong class="col-sm-6 card-heading">Confirmed cases by country</strong> 
+                                <strong class="col-sm-6 card-heading">Filter by country</strong> 
                                 <span class="col-sm-6"><input id="filterData" class="form-control" type="text" placeholder="Min. 2 characters"><span class="fas fa-search search-icon"></span></span>
                             </span>
                         </div>
@@ -99,18 +99,25 @@ const dataSourceJHU = async () => {
 const renderGlobalList = (data, id) => {
     let finalData = Object.values(data);
     finalData = finalData.sort((a, b) => (a.confirmedTotal < b.confirmedTotal) ? 1 : ((b.confirmedTotal < a.confirmedTotal) ? -1 : 0));
-    let template = `<ul>`
+    let template = `<table class="table table-hover table-borderless">
+                        <thead>
+                            <tr>
+                                <th style="width:60%">Country</th>
+                                <th style="width:15%">Confirmed cases</th>
+                                <th style="width:15%">deaths</th>
+                                <th style="width:10%"><span title="Case fatality rate">CFR</span></th>
+                            </tr>
+                        </thead><tbody>`
     finalData.forEach(dt => {
-        template += `<li class="row filter-countries"><div class="country-name">${dt.country}</div>
-                        <div class="ml-auto row">
-                            <div class="filter-btn col" title="Confirmed cases">${numberWithCommas(dt.confirmedTotal)}</div>
-                            <div class="filter-btn col death-count" title="Deaths">${numberWithCommas(dt.deathTotal)}</div>
-                            <div class="filter-btn col fatality-rate" title="Case fatality rate">${((dt.deathTotal/dt.confirmedTotal)*100).toFixed(2)}%</div>
-                        </div>
-                    </li>`;
+        template += `<tr>
+                        <td style="width:60%">${dt.country}</td>
+                        <td style="width:15%"><span class="filter-btn">${numberWithCommas(dt.confirmedTotal)}</span></td>
+                        <td style="width:15%"><span class="filter-btn death-count">${numberWithCommas(dt.deathTotal)}</span></td>
+                        <td style="width:10%"><span class="filter-btn fatality-rate">${((dt.deathTotal/dt.confirmedTotal)*100).toFixed(2)}%</span></td>
+                    </tr>`;
     }); 
                             
-    template += `</ul></div></div>`;
+    template += `</tbody></table></div></div>`;
     document.getElementById(id).innerHTML = template;
 }
 
