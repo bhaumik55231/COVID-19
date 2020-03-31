@@ -41,7 +41,7 @@
     margin: 0px !important;
 }
 
-ul{
+ul {
     padding-left: 15px;
 }
 
@@ -80,7 +80,7 @@ ul{
     margin-top: -26px;
     position: relative;
     z-index: 2;
-    background-color: #ffffff;
+    background-color: transparent;
     padding-left: 4px;
     padding-bottom: 4px;
 }
