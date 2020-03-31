@@ -238,9 +238,33 @@ const dataSourceCovidTracking = async () => {
     root.append(div4);
 
     const div5 = document.createElement('div');
-    div5.id = 'covidDailyStateCases';
     div5.classList = ['row sub-div-shadow custom-margin'];
+
+    const div51 = document.createElement('div');
+    div51.id = 'stateConfirmCount';
+    div51.classList = ['col-sm-3 custom-div'];
+    div5.append(div51);
+
+    const div52 = document.createElement('div');
+    div52.id = 'stateDeathCount';
+    div52.classList = ['col-sm-3 custom-div'];
+    div5.append(div52);
+
+    const div53 = document.createElement('div');
+    div53.id = 'stateHospitalizedCount';
+    div53.classList = ['col-sm-3 custom-div'];
+    div5.append(div53);
+
+    const div54 = document.createElement('div');
+    div54.id = 'stateTotalTestCount';
+    div54.classList = ['col-sm-3 custom-div'];
+    div5.append(div54);
     root.append(div5);
+
+    const div6 = document.createElement('div');
+    div6.id = 'covidDailyStateCases';
+    div6.classList = ['row sub-div-shadow custom-margin'];
+    root.append(div6);
 
     const usCurrent = await getUSCurrent();
     renderGlobalCount(`Confirmed cases </br><h4>${usCurrent[0].positive}</h4>`, 'confirmCountCT');
@@ -379,10 +403,18 @@ export const renderScatterPlot = (dailyData, id, state) => {
             name: 'Hospitalized Cases'
         }
     ];
+
+    if(state){
+        renderGlobalCount(`Confirmed cases </br><h4>${numberWithCommas(dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b))}</h4>`, 'stateConfirmCount');
+        renderGlobalCount(`Deaths </br><h4>${numberWithCommas(dailyData.map(dt => dt.dailyDeath).reduce((a,b) => a+b))}</h4>`, 'stateDeathCount');
+        renderGlobalCount(`Hospitalized cases </br><h4>${numberWithCommas(dailyData.map(dt => dt.hospitalized).reduce((a,b) => a+b))}</h4>`, 'stateHospitalizedCount');
+        renderGlobalCount(`Total tests </br><h4>${numberWithCommas(dailyData.map(dt => dt.pending).reduce((a,b) => a+b))}</h4>`, 'stateTotalTestCount');
+    }
+
     const layout = {
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
-        title: `${state ? states()[state]: 'USA'} positive cases${state ? `- ${numberWithCommas(dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b))}`: ''}`,
+        title: `${state ? `${states()[state]}`: 'USA positive cases '}`,
         xaxis: {
             fixedrange: true
         },
