@@ -298,7 +298,7 @@ const renderMap = (covidData, decider, id, hideUpdatedet) => {
     }
 
     const layout = {
-        title: `USA ${decider === 'positive' ? 'total positive cases' : 'Total deaths' } ${numberWithCommas(covidData.map(dt => dt[decider]).reduce((a,b) => a+b))}`,
+        title: `USA ${decider === 'positive' ? 'confirmed cases' : 'deaths' } ${numberWithCommas(covidData.map(dt => dt[decider]).reduce((a,b) => a+b))}`,
         geo:{
             scope: 'usa',
             showlakes: true,
