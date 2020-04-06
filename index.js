@@ -376,7 +376,9 @@ export const renderScatterPlot = (dailyData, id, state) => {
         plot_bgcolor: 'rgba(0,0,0,0)',
         title: `${state ? `${states()[state]}`: 'USA'}`,
         xaxis: {
-            fixedrange: true
+            fixedrange: true,
+            automargin: true,
+            tickangle: 45
         },
         yaxis: {
             title:`Counts`,
