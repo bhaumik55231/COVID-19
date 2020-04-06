@@ -51,11 +51,11 @@ ul {
 }
 
 .death-count {
-    background-color: #fab6b6;
+    color: #f76767;
 }
 
 .fatality-rate {
-    background-color: #c7cdff;
+    color: #8994f7;
 }
 
 .card-body {
@@ -88,4 +88,5 @@ ul {
 .daily-increase {
     color: rgb(117, 179, 115);
     font-weight: bold;
+    white-space: nowrap;
 }

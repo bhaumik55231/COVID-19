@@ -91,6 +91,14 @@ export const getTotals = (data) => {
     return total;
 }
 
+export const getLastIncrease = (data) => {
+    let increase = 0;
+    const keys = Object.keys(data);
+    const values = Object.values(data);
+    increase = values[keys.length-1] - values[keys.length-2];
+    return increase;
+}
+
 export const numberWithCommas = (x) => {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
@@ -130,9 +138,11 @@ export const getJHUData = async (url) => {
             newObj[obj['Country/Region']] = {};
             newObj[obj['Country/Region']].country = obj['Country/Region'];
             newObj[obj['Country/Region']].total = getTotals(obj);
+            newObj[obj['Country/Region']].increase = getLastIncrease(obj);
         }
         else{
             newObj[obj['Country/Region']].total += getTotals(obj);
+            newObj[obj['Country/Region']].increase += getLastIncrease(obj);
         }   
     });
     return newObj;
@@ -144,7 +154,9 @@ export const combineJHUData = (data1, data2) => {
         newObj[country] = {};
         newObj[country]['country'] = country;
         newObj[country]['confirmedTotal'] = data1[country]['total'];
+        newObj[country]['confirmedIncrease'] = data1[country]['increase'];
         newObj[country]['deathTotal'] = data2[country]['total'];
+        newObj[country]['deathIncrease'] = data2[country]['increase'];
     }
     return newObj;
 }
