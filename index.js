@@ -227,10 +227,6 @@ const dataSourceCovidTracking = async () => {
     root.append(div6);
 
     const usCurrent = await getUSCurrent();
-    renderGlobalCount(`Confirmed cases </br><h4>${usCurrent[0].positive}</h4>`, 'confirmCountCT');
-    renderGlobalCount(`Deaths </br><h4>${usCurrent[0].death}</h4><span class="filter-btn fatality-rate" title="Case fatality rate">CFR - ${((usCurrent[0].death/usCurrent[0].positive)*100).toFixed(2)}%</span>`, 'deathCountCT');
-    renderGlobalCount(`Hospitalized cases </br><h4>${usCurrent[0].hospitalized}</h4>`, 'hospitalizedCountCT');
-    renderGlobalCount(`Total tests </br><h4>${usCurrent[0].totalTestResults}</h4>`, 'totalPendingCount');
     const data = await getStateData();
     renderMap(data, 'positive', 'covidPositiveMap');
     renderMap(data, 'death', 'covidDeathMap');
@@ -238,6 +234,10 @@ const dataSourceCovidTracking = async () => {
     renderScatterPlot(dailyUS, 'covidDailyCases');
     const stateDaily = await getStatesDaily();
     renderSelectOptions(stateDaily);
+    renderGlobalCount(`Confirmed cases </br><h4>${usCurrent[0].positive}</h4><span class="daily-increase" title="Daily increase"><i class="fas fa-arrow-up"></i> ${numberWithCommas(dailyUS[dailyUS.length-1].positiveIncrease)}</span>`, 'confirmCountCT');
+    renderGlobalCount(`Deaths </br><h4>${usCurrent[0].death}</h4><span class="daily-increase" title="Daily increase"><i class="fas fa-arrow-up"></i> ${numberWithCommas(dailyUS[dailyUS.length-1].deathIncrease)}</span></br><span class="filter-btn fatality-rate" title="Case fatality rate">CFR - ${((usCurrent[0].death/usCurrent[0].positive)*100).toFixed(2)}%</span>`, 'deathCountCT');
+    renderGlobalCount(`Hospitalized cases </br><h4>${usCurrent[0].hospitalized}</h4><span class="daily-increase" title="Daily increase"><i class="fas fa-arrow-up"></i> ${numberWithCommas(dailyUS[dailyUS.length-1].hospitalizedIncrease)}</span>`, 'hospitalizedCountCT');
+    renderGlobalCount(`Total tests </br><h4>${usCurrent[0].totalTestResults}</h4><span class="daily-increase" title="Daily increase"><i class="fas fa-arrow-up"></i> ${numberWithCommas(dailyUS[dailyUS.length-1].totalTestResultsIncrease)}</span>`, 'totalPendingCount');
 }
 
 const getStateData = async () => {
@@ -364,10 +364,10 @@ export const renderScatterPlot = (dailyData, id, state) => {
     ];
 
     if(state){
-        renderGlobalCount(`Confirmed cases </br><h4>${numberWithCommas(dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b))}</h4>`, 'stateConfirmCount');
-        renderGlobalCount(`Deaths </br><h4>${numberWithCommas(dailyData.map(dt => dt.dailyDeath).reduce((a,b) => a+b))}</h4><span class="filter-btn fatality-rate" title="Case fatality rate">CFR - ${((dailyData.map(dt => dt.dailyDeath).reduce((a,b) => a+b)/dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b))*100).toFixed(2)}%</span>`, 'stateDeathCount');
-        renderGlobalCount(`Hospitalized cases </br><h4>${numberWithCommas(dailyData.map(dt => dt.hospitalized).reduce((a,b) => a+b))}</h4>`, 'stateHospitalizedCount');
-        renderGlobalCount(`Total tests </br><h4>${numberWithCommas(dailyData.map(dt => dt.pending).reduce((a,b) => a+b))}</h4>`, 'stateTotalTestCount');
+        renderGlobalCount(`Confirmed cases </br><h4>${numberWithCommas(dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b))}</h4><span class="daily-increase" title="Daily increase"><i class="fas fa-arrow-up"></i> ${numberWithCommas(dailyData[dailyData.length-1].positiveIncrease)}</span>`, 'stateConfirmCount');
+        renderGlobalCount(`Deaths </br><h4>${numberWithCommas(dailyData.map(dt => dt.dailyDeath).reduce((a,b) => a+b))}</h4><span class="daily-increase" title="Daily increase"><i class="fas fa-arrow-up"></i> ${numberWithCommas(dailyData[dailyData.length-1].deathIncrease)}</span></br><span class="filter-btn fatality-rate" title="Case fatality rate">CFR - ${((dailyData.map(dt => dt.dailyDeath).reduce((a,b) => a+b)/dailyData.map(dt => dt.dailyPositive).reduce((a,b) => a+b))*100).toFixed(2)}%</span>`, 'stateDeathCount');
+        renderGlobalCount(`Hospitalized cases </br><h4>${numberWithCommas(dailyData.map(dt => dt.hospitalized).reduce((a,b) => a+b))}</h4><span class="daily-increase" title="Daily increase"><i class="fas fa-arrow-up"></i> ${numberWithCommas(dailyData[dailyData.length-1].hospitalizedIncrease)}</span>`, 'stateHospitalizedCount');
+        renderGlobalCount(`Total tests </br><h4>${numberWithCommas(dailyData.map(dt => dt.pending).reduce((a,b) => a+b))}</h4><span class="daily-increase" title="Daily increase"><i class="fas fa-arrow-up"></i> ${numberWithCommas(dailyData[dailyData.length-1].totalTestResultsIncrease)}</span>`, 'stateTotalTestCount');
     }
 
     const layout = {

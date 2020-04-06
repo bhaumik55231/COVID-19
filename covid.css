@@ -84,3 +84,8 @@ ul {
     padding-left: 4px;
     padding-bottom: 4px;
 }
+
+.daily-increase {
+    color: rgb(117, 179, 115);
+    font-weight: bold;
+}
