@@ -316,6 +316,7 @@ const renderGlobalMap = (obj, id, title) => {
         locationmode: 'country names',
         locations: Object.values(obj).map(dt => dt['country']),
         z: Object.values(obj).map(dt => dt['total']),
+        text: Object.values(obj).map(dt => dt['increase']),
         colorscale: [
             [0, 'rgb(242,240,247)'], [0.2, 'rgb(218,218,235)'],
             [0.4, 'rgb(188,189,220)'], [0.6, 'rgb(158,154,200)'],
