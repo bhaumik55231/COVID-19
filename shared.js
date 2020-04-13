@@ -73,7 +73,7 @@ export const renderCountrySelectOptions = (countryDaily) => {
     let template = '<label for="countrySelect" class="col-sm-2 col-form-label"><strong>Select country: </strong></label><select id="countrySelect" class="form-control col-sm-4 sub-div-shadow">';
     const allCountries = Object.keys(countryDaily).sort();
     for(let key in allCountries){
-        template += `<option ${allCountries[key] === 'US' ? 'selected': ''} value=${allCountries[key]}>${allCountries[key]}</option>`
+        template += `<option ${allCountries[key] === 'US' ? 'selected': ''} value='${allCountries[key]}'>${allCountries[key]}</option>`
     }
     template += '</select>';
     selectDIV.innerHTML = template;
@@ -85,7 +85,7 @@ export const renderSelectOptions = (stateDaily) => {
     let template = '<label for="stateSelect" class="col-sm-2 col-form-label"><strong>Filter by state: </strong></label><select id="stateSelect" class="form-control col-sm-4 sub-div-shadow">';
     const allStates = sortObject(states());
     for(let key in allStates){
-        template += `<option ${key === 'NY' ? 'selected': ''} value=${key}>${allStates[key]}</option>`
+        template += `<option ${key === 'NY' ? 'selected': ''} value='${key}'>${allStates[key]}</option>`
     }
     template += '</select>';
     selectDIV.innerHTML = template;
