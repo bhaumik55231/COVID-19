@@ -1,4 +1,4 @@
-import { getStatesDaily, renderSelectOptions, states, getTotals, numberWithCommas, getJHUData, combineJHUData } from "./shared.js";
+import { getStatesDaily, renderSelectOptions, states, getTotals, numberWithCommas, getJHUData, combineJHUData, countriesDaily, renderCountrySelectOptions } from "./shared.js";
 
 window.onload = () => {
     if('serviceWorker' in navigator){
@@ -71,6 +71,16 @@ const dataSourceJHU = async () => {
     // div4.classList = ['row sub-div-shadow custom-margin'];
     // root.append(div4);
 
+    const div6 = document.createElement('div');
+    div6.id = 'countrySelectionDiv';
+    div6.classList = ['row custom-margin'];
+    root.append(div6);
+    
+    const div7 = document.createElement('div');
+    div7.id = 'countryScatterPlot';
+    div7.classList = ['row sub-div-shadow custom-margin'];
+    root.append(div7);
+
     const div5 = document.createElement('div');
     div5.id = 'renderGlobalList';
     div5.innerHTML = `<div class="card sub-div-shadow">
@@ -87,6 +97,9 @@ const dataSourceJHU = async () => {
 
     const dataConfirmed = await getJHUData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv');
     const dataDeaths = await getJHUData('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
+    const countryDaily = await countriesDaily('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')
+    renderCountrySelectOptions(countryDaily)
+    countryScatterPlot(countryDaily, 'countryScatterPlot', 'US')
     renderGlobalMap(dataConfirmed, 'covidPositiveGlobalMap', 'confirmed cases');
     renderGlobalMap(dataDeaths, 'covidDeathsGlobalMap', 'deaths');
     const dataCombined = combineJHUData(dataConfirmed, dataDeaths);
@@ -375,6 +388,33 @@ export const renderScatterPlot = (dailyData, id, state) => {
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
         title: `${state ? `${states()[state]}`: 'USA'}`,
+        xaxis: {
+            fixedrange: true,
+            automargin: true,
+            tickangle: 45
+        },
+        yaxis: {
+            title:`Counts`,
+            fixedrange: true
+        }
+    };
+    Plotly.newPlot(`${id}`, data, layout, {responsive: true, displayModeBar: false});
+}
+
+export const countryScatterPlot = (dailyData, id, country) => {
+    dailyData = dailyData[country];
+    const data = [
+        {
+            x: Object.keys(dailyData.daily),
+            y: Object.values(dailyData.daily),
+            type: 'scatter'
+        }
+    ];
+
+    const layout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        title: `${country} Confirmed cases - ${numberWithCommas(Object.values(dailyData.daily).reduce((a,b) => a+b))}`,
         xaxis: {
             fixedrange: true,
             automargin: true,

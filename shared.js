@@ -1,4 +1,4 @@
-import { renderScatterPlot } from "./index.js";
+import { renderScatterPlot, countryScatterPlot } from "./index.js";
 
 export const states = () => {
     return {
@@ -68,6 +68,18 @@ export const getStatesDaily = async () => {
     return data;
 }
 
+export const renderCountrySelectOptions = (countryDaily) => {
+    const selectDIV = document.getElementById('countrySelectionDiv');
+    let template = '<label for="countrySelect" class="col-sm-2 col-form-label"><strong>Select country: </strong></label><select id="countrySelect" class="form-control col-sm-4 sub-div-shadow">';
+    const allCountries = Object.keys(countryDaily).sort();
+    for(let key in allCountries){
+        template += `<option ${allCountries[key] === 'US' ? 'selected': ''} value=${allCountries[key]}>${allCountries[key]}</option>`
+    }
+    template += '</select>';
+    selectDIV.innerHTML = template;
+    addEventCountrySelect(countryDaily);
+}
+
 export const renderSelectOptions = (stateDaily) => {
     const selectDIV = document.getElementById('stateSelectionDiv');
     let template = '<label for="stateSelect" class="col-sm-2 col-form-label"><strong>Filter by state: </strong></label><select id="stateSelect" class="form-control col-sm-4 sub-div-shadow">';
@@ -115,6 +127,14 @@ const addEventStateSelect = (stateDaily) => {
     })
 }
 
+const addEventCountrySelect = (countryDaily) => {
+    const select = document.getElementById('countrySelect');
+    select.addEventListener('change', () => {
+        const value = select.value;
+        countryScatterPlot(countryDaily, 'countryScatterPlot', value);
+    })
+}
+
 const filterStateData = (data, state) => {
     data = data.filter(dt => { if(dt.state === state) return dt});
     data.forEach(dt => {
@@ -144,6 +164,29 @@ export const getJHUData = async (url) => {
             newObj[obj['Country/Region']].total += getTotals(obj);
             newObj[obj['Country/Region']].increase += getLastIncrease(obj);
         }   
+    });
+    return newObj;
+}
+
+export const countriesDaily = async (url) => {
+    const response = await fetch(url);
+    const csv = await response.text();
+    const data = csvJSON(csv);
+    const newObj = {};
+    data.forEach(obj => {
+        if(newObj[obj['Country/Region']] === undefined) {
+            newObj[obj['Country/Region']] = {};
+            newObj[obj['Country/Region']].country = obj['Country/Region'];
+            newObj[obj['Country/Region']].daily = {};
+            Object.keys(obj).forEach((key, index) => {
+                if(key !== 'Country/Region' && key !== 'Province/State' && key !== 'Lat' && key !== 'Long' ){
+                    if(index === 4) {
+                        newObj[obj['Country/Region']].daily[key] = parseInt(obj[key]);
+                    }
+                    else newObj[obj['Country/Region']].daily[key] = parseInt(obj[Object.keys(obj)[index]]) - parseInt(obj[Object.keys(obj)[index-1]]);
+                };
+            });
+        };
     });
     return newObj;
 }
