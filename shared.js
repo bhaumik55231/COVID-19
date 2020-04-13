@@ -180,10 +180,16 @@ export const countriesDaily = async (url) => {
             newObj[obj['Country/Region']].daily = {};
             Object.keys(obj).forEach((key, index) => {
                 if(key !== 'Country/Region' && key !== 'Province/State' && key !== 'Lat' && key !== 'Long' ){
-                    if(index === 4) {
-                        newObj[obj['Country/Region']].daily[key] = parseInt(obj[key]);
-                    }
+                    if(index === 4) newObj[obj['Country/Region']].daily[key] = parseInt(obj[key]);
                     else newObj[obj['Country/Region']].daily[key] = parseInt(obj[Object.keys(obj)[index]]) - parseInt(obj[Object.keys(obj)[index-1]]);
+                };
+            });
+        }
+        else {
+            Object.keys(obj).forEach((key, index) => {
+                if(key !== 'Country/Region' && key !== 'Province/State' && key !== 'Lat' && key !== 'Long' ){
+                    if(index === 4) newObj[obj['Country/Region']].daily[key] += parseInt(obj[key]);
+                    else newObj[obj['Country/Region']].daily[key] += (parseInt(obj[Object.keys(obj)[index]]) - parseInt(obj[Object.keys(obj)[index-1]]));
                 };
             });
         };
