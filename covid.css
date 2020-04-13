@@ -92,6 +92,10 @@ ul {
     white-space: nowrap;
 }
 
+.nowrap-white-space {
+    white-space: nowrap !important;
+}
+
 .COVID-19-info{
     padding: 15px;
 }

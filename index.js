@@ -116,9 +116,9 @@ const renderGlobalList = (data, id) => {
     finalData.forEach(dt => {
         template += `<li class="row filter-countries"><div class="country-name">${dt.country}</div>
                         <div class="ml-auto row">
-                            <div class="col" title="Confirmed cases">${numberWithCommas(dt.confirmedTotal)}<span class="daily-increase" title="Daily increase"></br><i class="fas fa-arrow-up"></i> ${numberWithCommas(dt.confirmedIncrease)}</span></div>
-                            <div class="col death-count" title="Deaths">${numberWithCommas(dt.deathTotal)}<span class="daily-increase" title="Daily increase"></br><i class="fas fa-arrow-up"></i> ${numberWithCommas(dt.deathIncrease)}</span></div>
-                            <div class="col fatality-rate" title="Case fatality rate">${((dt.deathTotal/dt.confirmedTotal)*100).toFixed(2)}%</div>
+                            <div class="col nowrap-white-space" title="Confirmed cases">${numberWithCommas(dt.confirmedTotal)}<span class="daily-increase" title="Daily increase"></br><i class="fas fa-arrow-up"></i> ${numberWithCommas(dt.confirmedIncrease)}</span></div>
+                            <div class="col death-count nowrap-white-space" title="Deaths">${numberWithCommas(dt.deathTotal)}<span class="daily-increase" title="Daily increase"></br><i class="fas fa-arrow-up"></i> ${numberWithCommas(dt.deathIncrease)}</span></div>
+                            <div class="col fatality-rate nowrap-white-space" title="Case fatality rate">${((dt.deathTotal/dt.confirmedTotal)*100).toFixed(2)}%</div>
                         </div>
                     </li>`;
     }); 
