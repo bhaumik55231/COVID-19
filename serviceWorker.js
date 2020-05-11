@@ -22,7 +22,7 @@ registerRoute(/\.(?:png|jpg|jpeg|svg|gif|ico)$/,
 
 registerRoute(
     new RegExp('https://covidtracking.com/api/.+'),
-    new StaleWhileRevalidate({
+    new NetworkFirst({
         cacheName: 'api-cache',
         plugins: [
             new CacheableResponsePlugin({
@@ -34,7 +34,7 @@ registerRoute(
 
 registerRoute(
     new RegExp('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/.+'),
-    new StaleWhileRevalidate({
+    new NetworkFirst({
         cacheName: 'api-cache',
         plugins: [
             new CacheableResponsePlugin({
