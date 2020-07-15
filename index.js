@@ -259,7 +259,7 @@ const getStateData = async () => {
     else return null;
 }
 
-const getUSDaily = async () => {
+export const getUSDaily = async () => {
     const response = await fetch('https://covidtracking.com/api/us/daily');
     let data = await response.json();
     data = data.sort((a, b) => (a.date > b.date) ? 1 : ((b.date > a.date) ? -1 : 0));
